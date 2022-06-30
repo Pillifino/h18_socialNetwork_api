@@ -79,4 +79,18 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+
+  deleteFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends: req.params.friendId } },
+      { runValidators: true, new: true }
+    )
+      .then((Thought) =>
+        !Thought
+          ? res.status(404).json({ message: "No User with this id!" })
+          : res.json(Thought)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
 };
