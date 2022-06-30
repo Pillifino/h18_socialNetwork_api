@@ -64,15 +64,15 @@ module.exports = {
   },
   // Delete User by Id
   deleteUser(req, res) {
-    User.findOneAndRemove(
-      { _id: req.params.userId },
-      { $pull: req.body },
-      { runValidators: true, new: true }
-    )
+    User.findOneAndRemove({_id: req.params.userId})
       .then((User) =>
         !User
           ? res.status(404).json({ message: "No User with this id!" })
-          : console.log("user is deleted!")
+          : User.findOneAndUpdate(
+            { users: req.params.studentID },
+            {$pull: { users: req.params.userId }},
+            { new: true }
+          )
       )
       .catch((err) => {
         console.log(err);
