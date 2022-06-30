@@ -9,15 +9,16 @@ module.exports = {
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
       .select("-__v")
-      .populate({ path: 'friends', select: '-__v' })
+      .populate({ path: "friends", select: "-__v" })
       .then((user) =>
         !user
           ? res.status(404).json({ message: "No user with that ID" })
           : res.json(user)
       )
       .catch((err) => {
-        console.log(err)
-        res.status(500).json(err)});
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
   // create a new user
   createUser(req, res) {
@@ -39,6 +40,40 @@ module.exports = {
             })
           : res.json(user);
       })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
+  // Update User By Id
+  updateUser(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((User) =>
+        !User
+          ? res.status(404).json({ message: "No user with this id!" })
+          : res.json(User)
+      )
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
+  // Delete User by Id
+  deleteUser(req, res) {
+    User.findOneAndRemove(
+      { _id: req.params.userId },
+      { $pull: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((User) =>
+        !User
+          ? res.status(404).json({ message: "No User with this id!" })
+          : console.log("user is deleted!")
+      )
       .catch((err) => {
         console.log(err);
         res.status(500).json(err);
