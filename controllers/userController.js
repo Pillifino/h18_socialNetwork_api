@@ -69,7 +69,7 @@ module.exports = {
         !User
           ? res.status(404).json({ message: "No User with this id!" })
           : User.findOneAndUpdate(
-            { users: req.params.studentID },
+            { users: req.params.userId },
             {$pull: { users: req.params.userId }},
             { new: true }
           )
