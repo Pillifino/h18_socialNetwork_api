@@ -3,13 +3,14 @@ const User = require("../models/User");
 module.exports = {
   getUsers(req, res) {
     User.find()
+      .populate({ path: "friends", select: "-__v" }) //show friends list for each user
       .then((users) => res.json(users))
       .catch((err) => res.status(500).json(err));
   },
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
       .select("-__v")
-      .populate({ path: "friends", select: "-__v" })
+      .populate({ path: "friends", select: "-__v" }) //show friends list for one user
       .then((user) =>
         !user
           ? res.status(404).json({ message: "No user with that ID" })
@@ -64,15 +65,15 @@ module.exports = {
   },
   // Delete User by Id
   deleteUser(req, res) {
-    User.findOneAndRemove({_id: req.params.userId})
+    User.findOneAndRemove({ _id: req.params.userId })
       .then((User) =>
         !User
           ? res.status(404).json({ message: "No User with this id!" })
           : User.findOneAndUpdate(
-            { users: req.params.userId },
-            {$pull: { users: req.params.userId }},
-            { new: true }
-          )
+              { users: req.params.userId },
+              { $pull: { users: req.params.userId } },
+              { new: true }
+            )
       )
       .catch((err) => {
         console.log(err);
